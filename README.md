@@ -1,4 +1,4 @@
-# How use that
+# How use this
 
 1. docker build -t martians .
 2. docker run martians
