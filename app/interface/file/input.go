@@ -2,6 +2,8 @@ package file
 
 import (
 	"bufio"
+	"fmt"
+	"martians/app/domain/entity"
 	"martians/app/interface/file/mappers"
 	"martians/app/share/constants"
 	"martians/app/usecase"
@@ -24,7 +26,10 @@ func NewInputInterface(u usecase.ExecuteSequence) input {
 	}
 }
 
-func (i *input) StartInstructions(nameFile string) (interface{}, error) {
+func (i *input) StartInstructions(nameFile string) error {
+
+	log.Info().Msg("Start Instructions")
+
 	lines, err := readFile(nameFile)
 
 	if err != nil {
@@ -32,7 +37,7 @@ func (i *input) StartInstructions(nameFile string) (interface{}, error) {
 			Str(constants.Function, StartInstructionsNameFunction).
 			Msg(ErrReadingToFile.Error())
 
-		return nil, ErrReadingToFile
+		return ErrReadingToFile
 
 	}
 	lenLines := len(lines)
@@ -42,7 +47,7 @@ func (i *input) StartInstructions(nameFile string) (interface{}, error) {
 			Str(constants.Function, StartInstructionsNameFunction).
 			Msg(ErrInstructionNotCompleted.Error())
 
-		return nil, ErrInstructionNotCompleted
+		return ErrInstructionNotCompleted
 	}
 
 	if lenLines%2 == 0 {
@@ -50,13 +55,13 @@ func (i *input) StartInstructions(nameFile string) (interface{}, error) {
 			Str(constants.Function, StartInstructionsNameFunction).
 			Msg(ErrAnInstructionIsMissing.Error())
 
-		return nil, ErrAnInstructionIsMissing
+		return ErrAnInstructionIsMissing
 	}
 
 	surface, errMappingStringToSurface := mappers.StringToSurfaceEntity(lines[0])
 
 	if errMappingStringToSurface != nil {
-		return nil, ErrMappingStringToSurfaceEntity
+		return ErrMappingStringToSurfaceEntity
 	}
 
 	allInstructionsWithOutSurface := lines[1:]
@@ -72,11 +77,31 @@ func (i *input) StartInstructions(nameFile string) (interface{}, error) {
 			Str(constants.Function, StartInstructionsNameFunction).
 			Msg("Error mapping map robotWithInstruction to robot entity")
 
+		return ErrMappingRobot
+
 	}
 
-	_, _ = i.ExecuteSequence(robots, *surface)
+	robots = i.ExecuteSequence(robots, *surface)
 
-	return nil, nil
+	printResult(robots)
+
+	return nil
+}
+
+func printResult(robots []entity.Robot) {
+
+	lost := "LOST"
+
+	for _, r := range robots {
+
+		flag := ""
+
+		if r.Lost {
+			flag = lost
+		}
+
+		fmt.Printf("%v %v %v %v \n", r.Coordinates.X, r.Coordinates.Y, r.Orientation, flag)
+	}
 }
 
 func readFile(nameFile string) ([]string, error) {

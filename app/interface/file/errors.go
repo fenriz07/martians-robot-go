@@ -9,4 +9,5 @@ const (
 	ErrInstructionNotCompleted      = fileInputError("error Sorry but the instructions should have to instructions for the plane and a robot")
 	ErrAnInstructionIsMissing       = fileInputError("error sorry an instruction is  missing")
 	ErrMappingStringToSurfaceEntity = fileInputError("error mapping string to surface entity")
+	ErrMappingRobot                 = fileInputError("error mapping map robotWithInstruction to robot entity")
 )

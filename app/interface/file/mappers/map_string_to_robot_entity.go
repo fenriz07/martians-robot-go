@@ -38,6 +38,10 @@ func MapStringToRobotEntity(robotWithInstruction [][]string) ([]entity.Robot, er
 	return robots, nil
 }
 
+const (
+	maxCoordinate int = 50
+)
+
 func stringToCoordinatesAndOrientation(line string) (*entity.Coordinates, *entity.Orientation, error) {
 	mapCoordinatesAndOrientation := strings.Split(line, " ")
 
@@ -53,6 +57,10 @@ func stringToCoordinatesAndOrientation(line string) (*entity.Coordinates, *entit
 	y, err := strconv.Atoi(mapCoordinatesAndOrientation[1])
 	if err != nil {
 		return nil, nil, err
+	}
+
+	if x > 50 || y > 50 {
+		return nil, nil, errors.New("the maximum value for any coordinate is 50")
 	}
 
 	orientation, err := entity.NewOrientationtByString(mapCoordinatesAndOrientation[2])

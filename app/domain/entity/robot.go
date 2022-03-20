@@ -2,6 +2,13 @@ package entity
 
 import "errors"
 
+const (
+	L                   string = "L"
+	R                   string = "R"
+	F                   string = "F"
+	MaxCharactersLength int    = 100
+)
+
 type Robot struct {
 	Coordinates
 	Orientation
@@ -17,9 +24,13 @@ func CreateNewInstructions(instructions string) (*Instructions, error) {
 
 	letters := []string{}
 
-	instructionsAllowed := map[string]bool{"L": true, "R": true, "F": true}
+	instructionsAllowed := map[string]bool{L: true, R: true, F: true}
 
-	for _, c := range instructions {
+	for k, c := range instructions {
+
+		if k > MaxCharactersLength {
+			return nil, errors.New("all instruction strings will be less than 100 characters in length")
+		}
 
 		letter := string(c)
 

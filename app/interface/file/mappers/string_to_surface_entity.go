@@ -51,6 +51,7 @@ func StringToSurfaceEntity(coordinates string) (*entity.Surface, error) {
 			X: x,
 			Y: y,
 		},
+		LostCoordinates: []entity.Coordinates{},
 	}, nil
 
 }
